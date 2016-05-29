@@ -1,20 +1,20 @@
+const Server = require('./server.js');
 const Client = require('./client.js');
 
-const client = new Client('user', 'password', {
-  route: '/'
-});
+const server = new Server();
+const client = new Client({}, server);
+
+client.action(require('./actions/openInventory.js'));
 
 client.on('storeChanged', function(data) {
-  console.log('storeChanged', data);
+  console.log(data);
 });
 
-client.on('triggerServer', function(data) {
-  console.log('triggerServer', data);
+client.on('ready', function() {
+  console.log('everything ready');
+
+  client.trigger('open', 'inventory');
+  client.trigger('open', 'map');
 });
 
-client.action(
-  require('./actions/openInventory.js')
-);
-
-client.trigger('open', 'inventory');
-client.trigger('open', 'map');
+client.connect('username', 'password');

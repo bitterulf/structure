@@ -1,18 +1,39 @@
 const util = require('util');
 const EventEmitter = require('events');
 const _ = require('underscore');
+const Server = require('./server.js');
 
-function Client(username, password, store) {
+function Client(store, server) {
   EventEmitter.call(this);
-  this.username = username;
-  this.password = password;
   this.store = store;
   this.actions = [];
+  this.server = server;
+
+  var that = this;
+  this.connection = this.server.connect();
+  this.connection.on('token', function(token) {
+    that.update('token', token);
+    that.emit('ready');
+  });
+  this.connection.on('update', function(payload) {
+    that.update(payload.key, payload.data);
+  });
+
 };
 
 util.inherits(Client, EventEmitter);
 
+Client.prototype.connect = function(username, password) {
+  this.connection.auth(username, password);
+};
+
+Client.prototype.isConnected = function() {
+  return !!this.store.token;
+};
+
 Client.prototype.trigger = function(name, payload) {
+  if (!this.isConnected()) return;
+
   var executed = 0;
   var that = this;
 
@@ -27,7 +48,7 @@ Client.prototype.trigger = function(name, payload) {
   });
 
   if (!executed) {
-    this.emit('triggerServer', { action: name, payload: payload});
+    this.server.trigger(name, payload);
   }
 };
 
