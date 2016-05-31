@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/bitterulf/structure#readme",
   "dependencies": {
+    "nedb": "^1.8.0",
     "underscore": "^1.8.3"
   }
 }
