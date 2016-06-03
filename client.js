@@ -3,9 +3,9 @@ const EventEmitter = require('events');
 const _ = require('underscore');
 const Server = require('./server.js');
 
-function Client(store, server) {
+function Client(state, server) {
   EventEmitter.call(this);
-  this.store = store;
+  this.state = state;
   this.actions = [];
   this.server = server;
 
@@ -28,7 +28,7 @@ Client.prototype.connect = function(username, password) {
 };
 
 Client.prototype.isConnected = function() {
-  return !!this.store.token;
+  return !!this.state.token;
 };
 
 Client.prototype.trigger = function(name, payload) {
@@ -38,8 +38,8 @@ Client.prototype.trigger = function(name, payload) {
   var that = this;
 
   this.actions.forEach(function(action) {
-    if (action.check(name, payload, that.store)) {
-      var result = action.fn(name, payload, that.store);
+    if (action.check(name, payload, that.state)) {
+      var result = action.fn(name, payload, that.state);
       _.keys(result).forEach(function(key) {
         that.update(key, result[key]);
       });
@@ -52,9 +52,9 @@ Client.prototype.trigger = function(name, payload) {
   }
 };
 
-Client.prototype.update = function(storeKey, storeData) {
-  this.store[storeKey] = storeData;
-  this.emit('storeChanged', this.store);
+Client.prototype.update = function(stateKey, stateData) {
+  this.state[stateKey] = stateData;
+  this.emit('stateChanged', this.state);
 };
 
 Client.prototype.action = function(action) {

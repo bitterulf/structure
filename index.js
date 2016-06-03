@@ -6,8 +6,8 @@ const client = new Client({}, server);
 
 client.action(require('./actions/openInventory.js'));
 
-client.on('storeChanged', function(data) {
-  console.log('store change', data);
+client.on('stateChanged', function(data) {
+  console.log('state change', data);
 });
 
 client.on('ready', function() {
