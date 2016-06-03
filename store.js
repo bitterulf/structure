@@ -20,7 +20,7 @@ Store.prototype.insert = function(doc, cb) {
 };
 
 Store.prototype.find = function() {
-  this.db.find.apply(this, arguments);
+  this.db.find.apply(this.db, arguments);
 };
 
 module.exports = Store;

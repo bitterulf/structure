@@ -10,22 +10,23 @@ function Client(name, password, state, server) {
   this.server = server;
 
   var that = this;
-  this.connection = this.server.connect(name, password);
-  this.connection.on('token', function(token) {
-    that.update('token', token);
+
+  this.server.connect(name, password, function(err, connection) {
+    if (err) return console.log(err);
+
+    that.connection = connection;
+
+    that.connection.on('update', function(key, data) {
+      that.update(key, data);
+    });
+
+    that.update('token', that.connection.id);
     that.emit('ready');
-  });
-  this.connection.on('update', function(key, data) {
-    that.update(key, data);
   });
 
 };
 
 util.inherits(Client, EventEmitter);
-
-Client.prototype.connect = function(username, password) {
-  this.connection.auth(username, password);
-};
 
 Client.prototype.isConnected = function() {
   return !!this.state.token;

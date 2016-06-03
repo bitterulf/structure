@@ -9,6 +9,13 @@ function Server() {
   EventEmitter.call(this);
   this.connections = [];
 
+  this.users = new Store('users');
+  this.users.insert({
+    username: 'username',
+    password: 'password',
+    id: generateId()
+  });
+
   this.addStore('storeA');
 };
 
@@ -24,13 +31,20 @@ Server.prototype.addStore = function(name) {
 
 util.inherits(Server, EventEmitter);
 
-Server.prototype.connect = function(name, password) {
-  // check name and password
+Server.prototype.connect = function(username, password, cb) {
+  const that = this;
 
-  const id = generateId();
-  var connection = new Connection(id);
-  this.connections.push(connection);
-  return connection;
+  // add more middleware here tu put in a real server
+
+  this.users.find({username: username, password: password}, function(err, docs) {
+    if (err) return cb(err);
+    if (!docs.length) return cb(new Error('invalid user'));
+
+    var connection = new Connection(docs[0].id);
+    that.connections.push(connection);
+
+    cb(null, connection);
+  });
 };
 
 Server.prototype.broadcast = function(key, data) {

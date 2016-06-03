@@ -2,19 +2,20 @@ const Server = require('./server.js');
 const Client = require('./client.js');
 
 const server = new Server();
-const client = new Client('bob', 'password', {}, server);
 
-client.action(require('./actions/openInventory.js'));
+setTimeout(function() {
+  const client = new Client('username', 'password', {}, server);
 
-client.on('stateChanged', function(data) {
-  console.log('state change', data);
-});
+  client.action(require('./actions/openInventory.js'));
 
-client.on('ready', function() {
-  console.log('everything ready');
+  client.on('stateChanged', function(data) {
+    console.log('state change', data);
+  });
 
-  client.trigger('open', 'inventory');
-  client.trigger('open', 'map');
-});
+  client.on('ready', function() {
+    console.log('everything ready');
 
-client.connect('username', 'password');
+    client.trigger('open', 'inventory');
+    client.trigger('open', 'map');
+  });
+}, 1000);
