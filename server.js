@@ -3,6 +3,7 @@ const EventEmitter = require('events');
 const _ = require('underscore');
 const Connection = require('./connection.js');
 const Store = require('./store.js');
+const generateId = require('shortid');
 
 function Server() {
   EventEmitter.call(this);
@@ -24,14 +25,17 @@ Server.prototype.addStore = function(name) {
 util.inherits(Server, EventEmitter);
 
 Server.prototype.connect = function(name, password) {
-  console.log('i should check it', name, password);
-  var connection = new Connection();
+  // check name and password
+
+  const id = generateId();
+  var connection = new Connection(id);
   this.connections.push(connection);
   return connection;
 };
 
 Server.prototype.broadcast = function(key, data) {
   this.connections.forEach(function(connection) {
+    console.log('updating', connection.id);
     connection.emit('update', key, data);
   });
 };
