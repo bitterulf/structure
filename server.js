@@ -7,7 +7,18 @@ const Store = require('./store.js');
 function Server() {
   EventEmitter.call(this);
   this.connections = [];
-  this.store = new Store();
+
+  this.addStore('storeA');
+};
+
+Server.prototype.addStore = function(name) {
+  const that = this;
+
+  this[name] = new Store(name);
+
+  this[name].on('change', function(key, data) {
+    that.broadcast(key, data);
+  });
 };
 
 util.inherits(Server, EventEmitter);
@@ -18,20 +29,15 @@ Server.prototype.connect = function() {
   return connection;
 };
 
+Server.prototype.broadcast = function(key, data) {
+  this.connections.forEach(function(connection) {
+    connection.emit('update', key, data);
+  });
+};
+
 Server.prototype.trigger = function(name, payload) {
   console.log('server:', name, payload);
-  const connections = this.connections;
-  this.store.insert({}, function(err, res) {
-    connections.forEach(function(connection) {
-      connection.emit('update', {
-        key: 'realm',
-        data: {
-          playerOnline: 0,
-          res: res
-        }
-      });
-    });
-  });
+  this.storeA.insert({}, function(err, res) {});
 
 };
 

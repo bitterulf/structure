@@ -15,8 +15,8 @@ function Client(store, server) {
     that.update('token', token);
     that.emit('ready');
   });
-  this.connection.on('update', function(payload) {
-    that.update(payload.key, payload.data);
+  this.connection.on('update', function(key, data) {
+    that.update(key, data);
   });
 
 };
