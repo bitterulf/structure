@@ -3,14 +3,14 @@ const EventEmitter = require('events');
 const _ = require('underscore');
 const Server = require('./server.js');
 
-function Client(state, server) {
+function Client(name, password, state, server) {
   EventEmitter.call(this);
   this.state = state;
   this.actions = [];
   this.server = server;
 
   var that = this;
-  this.connection = this.server.connect();
+  this.connection = this.server.connect(name, password);
   this.connection.on('token', function(token) {
     that.update('token', token);
     that.emit('ready');

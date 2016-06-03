@@ -2,7 +2,7 @@ const Server = require('./server.js');
 const Client = require('./client.js');
 
 const server = new Server();
-const client = new Client({}, server);
+const client = new Client('bob', 'password', {}, server);
 
 client.action(require('./actions/openInventory.js'));
 

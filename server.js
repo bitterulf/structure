@@ -23,7 +23,8 @@ Server.prototype.addStore = function(name) {
 
 util.inherits(Server, EventEmitter);
 
-Server.prototype.connect = function() {
+Server.prototype.connect = function(name, password) {
+  console.log('i should check it', name, password);
   var connection = new Connection();
   this.connections.push(connection);
   return connection;
