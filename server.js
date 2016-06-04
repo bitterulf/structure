@@ -3,6 +3,7 @@ const EventEmitter = require('events');
 const _ = require('underscore');
 const Connection = require('./connection.js');
 const Store = require('./store.js');
+const Saga = require('./saga.js');
 const generateId = require('shortid');
 
 function Server() {
@@ -55,8 +56,36 @@ Server.prototype.broadcast = function(key, data) {
 };
 
 Server.prototype.trigger = function(name, payload) {
+  const saga1 = new Saga('Saga1');
+  saga1.add(
+    function(payload, stores, cb) {
+      console.log('transaction1');
+      cb(null, true);
+    },
+    function(payload, stores, cb) {
+      console.log('compensation1');
+      cb('foo');
+    }
+  );
+
+  saga1.add(
+    function(payload, stores, cb) {
+      console.log('transaction2');
+      cb('shit', false);
+    },
+    function(payload, stores, cb) {
+      console.log('compensation2');
+      cb();
+    }
+  );
+
+  saga1.run(payload, {}, function(err, succeed) {
+    console.log('saga runned', err, succeed);
+  });
+
   console.log('server:', name, payload);
-  this.storeA.insert({}, function(err, res) {});
+  console.log('better', name);
+  this.storeA.insert({storeA: this.storeA}, function(err, res) {});
 
 };
 
