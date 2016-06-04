@@ -39,7 +39,6 @@ module.exports = function() {
     function(token, payload, stores, cb) {
       console.log('create item', token);
       stores.vault.insert({token: token, type: payload.type}, function(err, doc) {
-        console.log('resultiiiii');
         if (err || !doc) return cb(null, false);
         console.log('item created');
         cb(null, true);
@@ -49,6 +48,7 @@ module.exports = function() {
       console.log('compensate item creation', token);
       stores.vault.remove({token: token, type: payload.type}, {}, function (err, numRemoved) {
         if (err || !numRemoved) return cb(null, false);
+        console.log('item removed');
         cb(null, true);
       });
     }

@@ -19,7 +19,6 @@ function Server() {
     id: generateId()
   });
 
-  this.addStore('storeA');
   this.addStore('wallet');
   this.addStore('vault');
 };
@@ -67,10 +66,6 @@ Server.prototype.trigger = function(token, name, payload) {
 
   saga1.run(token, payload, stores, function(err, succeed) {
     console.log('saga runned', err, succeed);
-  });
-
-  this.storeA.insert({storeA: this.storeA}, function(err, res) {
-    console.log('inserted! inserted inserted inserted inserted inserted');
   });
 };
 

@@ -15,11 +15,7 @@ setTimeout(function() {
   client.on('ready', function() {
     console.log('everything ready');
 
-    client.trigger('open', 'inventory');
+    // client.trigger('open', 'inventory');
     client.trigger('buy', {type: 'wood', price: 100});
   });
-}, 2000);
-
-setTimeout(function() {
-  console.log('muh');
-}, 5000);
+}, 0);
