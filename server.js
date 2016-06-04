@@ -6,6 +6,8 @@ const Store = require('./store.js');
 const Saga = require('./saga.js');
 const generateId = require('shortid');
 
+const saga1 = require('./sagas/saga1.js')();
+
 function Server() {
   EventEmitter.call(this);
   this.connections = [];
@@ -58,38 +60,12 @@ Server.prototype.broadcast = function(key, data) {
 };
 
 Server.prototype.trigger = function(token, name, payload) {
-  const saga1 = new Saga('Saga1');
-
-  saga1.add(
-    function(token, payload, stores, cb) {
-      console.log('transaction1', token);
-
-      stores.wallet.find({token: token}, function(err, result) {
-        if (err || !result.length) return cb(err, false);
-        cb(null, true);
-      });
-    },
-    function(token, payload, stores, cb) {
-      console.log('compensation1', token);
-      cb('foo');
-    }
-  );
-
-  saga1.add(
-    function(token, payload, stores, cb) {
-      console.log('transaction2', token);
-      cb(null, true);
-    },
-    function(token, payload, stores, cb) {
-      console.log('compensation2', token);
-      cb();
-    }
-  );
-
-  saga1.run(token, payload, {
+  const stores = {
     wallet: this.wallet,
     vault: this.vault
-  }, function(err, succeed) {
+  };
+
+  saga1.run(token, payload, stores, function(err, succeed) {
     console.log('saga runned', err, succeed);
   });
 
