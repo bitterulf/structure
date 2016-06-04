@@ -69,7 +69,9 @@ Server.prototype.trigger = function(token, name, payload) {
     console.log('saga runned', err, succeed);
   });
 
-  this.storeA.insert({storeA: this.storeA}, function(err, res) {});
+  this.storeA.insert({storeA: this.storeA}, function(err, res) {
+    console.log('inserted! inserted inserted inserted inserted inserted');
+  });
 };
 
 module.exports = Server;

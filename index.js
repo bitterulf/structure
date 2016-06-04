@@ -16,6 +16,10 @@ setTimeout(function() {
     console.log('everything ready');
 
     client.trigger('open', 'inventory');
-    client.trigger('open', 'map');
+    client.trigger('buy', {type: 'wood', price: 100});
   });
-}, 1000);
+}, 2000);
+
+setTimeout(function() {
+  console.log('muh');
+}, 5000);

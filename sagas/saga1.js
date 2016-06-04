@@ -5,27 +5,52 @@ module.exports = function() {
 
   saga.add(
     function(token, payload, stores, cb) {
-      console.log('transaction1', token);
+      console.log('consume money', token);
 
-      stores.wallet.find({token: token}, function(err, result) {
-        if (err || !result.length) return cb(err, false);
-        cb(null, true);
+      stores.wallet.find({token: token}, function(err, entries) {
+        if (err) return cb(err, false);
+
+        var balance = 0;
+        entries.forEach(function(entry) {
+          balance += entry.amount;
+        });
+
+        if (balance < payload.price) {
+          console.log('not enough money');
+          return cb(null, false);
+        }
+
+        stores.wallet.insert({token: token, amount: payload.price * -1}, function(err, doc) {
+          if (err || !doc) return cb(null, false);
+          cb(null, true);
+        });
       });
     },
     function(token, payload, stores, cb) {
-      console.log('compensation1', token);
-      cb('foo');
+      console.log('compensate money consumption', token);
+      stores.wallet.insert({token: token, amount: payload.price}, function(err, doc) {
+        if (err || !doc) return cb(null, false);
+        cb(null, true);
+      });
     }
   );
 
   saga.add(
     function(token, payload, stores, cb) {
-      console.log('transaction2', token);
-      cb(null, true);
+      console.log('create item', token);
+      stores.vault.insert({token: token, type: payload.type}, function(err, doc) {
+        console.log('resultiiiii');
+        if (err || !doc) return cb(null, false);
+        console.log('item created');
+        cb(null, true);
+      });
     },
     function(token, payload, stores, cb) {
-      console.log('compensation2', token);
-      cb();
+      console.log('compensate item creation', token);
+      stores.vault.remove({token: token, type: payload.type}, {}, function (err, numRemoved) {
+        if (err || !numRemoved) return cb(null, false);
+        cb(null, true);
+      });
     }
   );
 

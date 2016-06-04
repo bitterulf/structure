@@ -26,6 +26,7 @@ Saga.prototype.run = function(token, payload, stores, cb) {
   });
 
   async.parallel(transactions, function(err, results) {
+    console.log('REEEEEEEEEEEEEEEEEEEZ', results);
     var compensations = [];
 
     results.forEach(function(result, index) {
