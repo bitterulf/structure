@@ -18,6 +18,8 @@ function Server() {
   });
 
   this.addStore('storeA');
+  this.addStore('wallet');
+  this.addStore('vault');
 };
 
 Server.prototype.addStore = function(name) {
@@ -55,38 +57,43 @@ Server.prototype.broadcast = function(key, data) {
   });
 };
 
-Server.prototype.trigger = function(name, payload) {
+Server.prototype.trigger = function(token, name, payload) {
   const saga1 = new Saga('Saga1');
+
   saga1.add(
-    function(payload, stores, cb) {
-      console.log('transaction1');
-      cb(null, true);
+    function(token, payload, stores, cb) {
+      console.log('transaction1', token);
+
+      stores.wallet.find({token: token}, function(err, result) {
+        if (err || !result.length) return cb(err, false);
+        cb(null, true);
+      });
     },
-    function(payload, stores, cb) {
-      console.log('compensation1');
+    function(token, payload, stores, cb) {
+      console.log('compensation1', token);
       cb('foo');
     }
   );
 
   saga1.add(
-    function(payload, stores, cb) {
-      console.log('transaction2');
-      cb('shit', false);
+    function(token, payload, stores, cb) {
+      console.log('transaction2', token);
+      cb(null, true);
     },
-    function(payload, stores, cb) {
-      console.log('compensation2');
+    function(token, payload, stores, cb) {
+      console.log('compensation2', token);
       cb();
     }
   );
 
-  saga1.run(payload, {}, function(err, succeed) {
+  saga1.run(token, payload, {
+    wallet: this.wallet,
+    vault: this.vault
+  }, function(err, succeed) {
     console.log('saga runned', err, succeed);
   });
 
-  console.log('server:', name, payload);
-  console.log('better', name);
   this.storeA.insert({storeA: this.storeA}, function(err, res) {});
-
 };
 
 module.exports = Server;

@@ -49,7 +49,7 @@ Client.prototype.trigger = function(name, payload) {
   });
 
   if (!executed) {
-    this.server.trigger(name, payload);
+    this.server.trigger(this.state.token, name, payload);
   }
 };
 
