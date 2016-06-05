@@ -1,11 +1,11 @@
 module.exports = {
-  name: 'openInventory',
+  name: 'changeRoute',
   check: function (name, payload, store) {
-    return name == 'open' && payload == 'inventory';
+    return name == 'changeRoute';
   },
   fn: function (name, payload, store) {
     return {
-      route: '/inventory'
+      route: payload
     };
   }
 };

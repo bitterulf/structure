@@ -20,13 +20,59 @@ function renderWallet(wallet) {
   ];
 };
 
-module.exports = function(state, trigger) {
-  m.render(document.body, [
+function renderMarket(trigger) {
+  return [
+    m('h1', 'market'),
     m('div', {
       onclick: function() {
-        trigger('testAction', {});
+        trigger('buy', {
+          type: 'wood',
+          price: 100
+        });
       }
-    }, 'clicker'),
-    renderWallet(state.wallet)
+    }, 'buy Wood')
+  ];
+};
+
+function renderMenu(route, trigger) {
+  if (route == 'wallet') {
+    return m('div', [
+      m('div', {
+        onclick: function() {
+          trigger('changeRoute', '');
+        }
+      }, 'back')
+    ]);
+  }
+  else if (route == 'market') {
+    return m('div', [
+      m('div', {
+        onclick: function() {
+          trigger('changeRoute', '');
+        }
+      }, 'back')
+    ]);
+  }
+  else {
+    return m('div', [
+      m('div', {
+        onclick: function() {
+          trigger('changeRoute', 'wallet');
+        }
+      }, 'wallet'),
+      m('div', {
+        onclick: function() {
+          trigger('changeRoute', 'market');
+        }
+      }, 'market')
+    ]);
+  }
+};
+
+module.exports = function(state, trigger) {
+  m.render(document.body, [
+    renderMenu(state.route, trigger),
+    state.route == 'wallet' ? renderWallet(state.wallet) : '',
+    state.route == 'market' ? renderMarket(trigger) : ''
   ]);
 };
