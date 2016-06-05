@@ -8,4 +8,8 @@ function Connection(id) {
 
 util.inherits(Connection, EventEmitter);
 
+Connection.prototype.update = function(key, data) {
+  this.emit('clientUpdate', key, data);
+};
+
 module.exports = Connection;

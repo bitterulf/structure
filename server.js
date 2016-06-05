@@ -62,7 +62,7 @@ Server.prototype.connect = function(username, password, cb) {
 Server.prototype.broadcast = function(key, data) {
   this.connections.forEach(function(connection) {
     console.log('updating', connection.id);
-    connection.emit('update', key, data);
+    connection.update(key, data);
   });
 };
 
