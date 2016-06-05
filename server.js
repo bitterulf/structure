@@ -11,6 +11,7 @@ const saga1 = require('./sagas/saga1.js')();
 function Server() {
   EventEmitter.call(this);
   this.connections = [];
+  this.stores = {};
 
   var token = generateId();
 
@@ -18,13 +19,13 @@ function Server() {
   this.addStore('vault');
   this.addStore('users');
 
-  this.users.insert({
+  this.stores.users.insert({
     username: 'username',
     password: 'password',
     id: token
   });
 
-  this.wallet.insert({
+  this.stores.wallet.insert({
     amount: 500,
     id: token
   });
@@ -33,9 +34,9 @@ function Server() {
 Server.prototype.addStore = function(name) {
   const that = this;
 
-  this[name] = new Store(name);
+  this.stores[name] = new Store(name);
 
-  this[name].on('change', function(key, data) {
+  this.stores[name].on('change', function(key, data) {
     that.broadcast(key, data);
   });
 };
@@ -47,7 +48,7 @@ Server.prototype.connect = function(username, password, cb) {
 
   // add more middleware here tu put in a real server
 
-  this.users.find({username: username, password: password}, function(err, docs) {
+  this.stores.users.find({username: username, password: password}, function(err, docs) {
     if (err) return cb(err);
     if (!docs.length) return cb(new Error('invalid user'));
 
@@ -66,14 +67,9 @@ Server.prototype.broadcast = function(key, data) {
 };
 
 Server.prototype.trigger = function(token, name, payload) {
-  const stores = {
-    wallet: this.wallet,
-    vault: this.vault
-  };
-
   switch(name) {
     case 'buy':
-      saga1.run(token, payload, stores, function(err, succeed) {});
+      saga1.run(token, payload, this.stores, function(err, succeed) {});
   }
 
 };
