@@ -16,8 +16,10 @@ function Client(name, password, state, server) {
 
     that.connection = connection;
 
-    that.connection.on('clientUpdate', function(key, data) {
-      that.update(key, data);
+    that.connection.on('clientUpdate', function(set) {
+      _.keys(set).forEach(function(key) {
+        that.update(key, set[key]);
+      });
     });
 
     that.update('token', that.connection.id);
