@@ -18,6 +18,7 @@
   "homepage": "https://github.com/bitterulf/structure#readme",
   "dependencies": {
     "async": "^2.0.0-rc.5",
+    "mithril": "^0.2.5",
     "nedb": "^1.8.0",
     "shortid": "^2.2.6",
     "underscore": "^1.8.3"
