@@ -7,7 +7,7 @@ module.exports = function() {
     function(token, payload, stores, cb) {
       console.log('consume money', token);
 
-      stores.wallet.find({token: token}, function(err, entries) {
+      stores.wallet.find({id: token}, function(err, entries) {
         if (err) return cb(err, false);
 
         var balance = 0;
@@ -16,7 +16,7 @@ module.exports = function() {
         });
 
         if (balance < payload.price) {
-          console.log('not enough money');
+          console.log('not enough money', balance, payload.price);
           return cb(null, false);
         }
 

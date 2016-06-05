@@ -12,15 +12,22 @@ function Server() {
   EventEmitter.call(this);
   this.connections = [];
 
-  this.users = new Store('users');
-  this.users.insert({
-    username: 'username',
-    password: 'password',
-    id: generateId()
-  });
+  var token = generateId();
 
   this.addStore('wallet');
   this.addStore('vault');
+  this.addStore('users');
+
+  this.users.insert({
+    username: 'username',
+    password: 'password',
+    id: token
+  });
+
+  this.wallet.insert({
+    amount: 500,
+    id: token
+  });
 };
 
 Server.prototype.addStore = function(name) {
@@ -64,9 +71,11 @@ Server.prototype.trigger = function(token, name, payload) {
     vault: this.vault
   };
 
-  saga1.run(token, payload, stores, function(err, succeed) {
-    console.log('saga runned', err, succeed);
-  });
+  switch(name) {
+    case 'buy':
+      saga1.run(token, payload, stores, function(err, succeed) {});
+  }
+
 };
 
 module.exports = Server;
