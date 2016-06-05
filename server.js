@@ -36,6 +36,8 @@ function Server() {
   });
 };
 
+util.inherits(Server, EventEmitter);
+
 Server.prototype.addStore = function(name) {
   const that = this;
 
@@ -45,8 +47,6 @@ Server.prototype.addStore = function(name) {
     that.broadcast(key, data);
   });
 };
-
-util.inherits(Server, EventEmitter);
 
 Server.prototype.connect = function(username, password, cb) {
   const that = this;
