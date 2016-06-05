@@ -74,7 +74,9 @@ Server.prototype.broadcast = function(key, data) {
 Server.prototype.trigger = function(token, name, payload) {
   switch(name) {
     case 'buy':
-      saga1.run(token, payload, this.stores, function(err, succeed) {});
+      return saga1.run(token, payload, this.stores, function(err, succeed) {});
+    default:
+      return console.log(name, 'is not a valid action');
   }
 
 };

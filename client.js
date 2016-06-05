@@ -2,7 +2,7 @@ const util = require('util');
 const EventEmitter = require('events');
 const _ = require('underscore');
 const Server = require('./server.js');
-const m = require('mithril');
+const renderer = require('./renderer.js');
 
 function Client(name, password, state, server) {
   EventEmitter.call(this);
@@ -60,20 +60,11 @@ Client.prototype.update = function(stateKey, stateData) {
   this.state[stateKey] = stateData;
   this.emit('stateChanged', this.state);
 
-  m.render(document.body, [
-    m('h1', 'wallet'),
-    m('div', this.state.wallet.map(
-      function(entry) {
-        return m('div', entry.amount);
-      })
-    )
-  ]);
+  renderer(this.state, this.trigger.bind(this));
 };
 
 Client.prototype.action = function(action) {
   this.actions.push(action);
 };
-
-console.log(m);
 
 module.exports = Client;
