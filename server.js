@@ -29,6 +29,11 @@ function Server() {
     amount: 500,
     id: token
   });
+
+  this.stores.wallet.insert({
+    amount: 666,
+    id: generateId()
+  });
 };
 
 Server.prototype.addStore = function(name) {

@@ -20,7 +20,7 @@ module.exports = function() {
           return cb(null, false);
         }
 
-        stores.wallet.insert({token: token, amount: payload.price * -1}, function(err, doc) {
+        stores.wallet.insert({id: token, amount: payload.price * -1}, function(err, doc) {
           if (err || !doc) return cb(null, false);
           cb(null, true);
         });
@@ -38,7 +38,7 @@ module.exports = function() {
   saga.add(
     function(token, payload, stores, cb) {
       console.log('create item', token);
-      stores.vault.insert({token: token, type: payload.type}, function(err, doc) {
+      stores.vault.insert({id: token, type: payload.type}, function(err, doc) {
         if (err || !doc) return cb(null, false);
         console.log('item created');
         cb(null, true);
